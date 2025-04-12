@@ -39,11 +39,14 @@ Generating the Mandelbrot set is computationally expensive because:
 
 Three build targets are available:
 
+(Compiled with -O3)
+
 ```bash
 make naive      # Scalar (naive) implementation
 make opt4       # SIMD-like implementation
 make opt44      # ARM NEON Intrinsics implementation
 ```
+
 
 Executables will be located in the `./build/` directory.
 
