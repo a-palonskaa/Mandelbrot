@@ -15,9 +15,9 @@ SDL_Color color_from_int(int n) {
         }
         else {
             float t = (float) n / 20;
-            color.r = 255 + (0 - 255) * t;
-            color.g = 10 + (0 - 10) * t;
-            color.b = 167 + (128 - 167) * t;
+            color.r = 255 + ((0 - 255) * t);
+            color.g = 10  + ((0 - 10) * t);
+            color.b = 167 + ((128 - 167) * t);
         }
     }
     return color;

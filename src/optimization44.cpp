@@ -2,27 +2,33 @@
 #include <stdlib.h>
 #include <assert.h>
 #include "sdl_interpret.h"
+#include "arg_parser.h"
 
 const int MAX_ITERATION = 255;
 const int R2_BOUNDARY = 100;
-const int CYCLE_ITERATIONS_CNT = 100;
 const int X_SHIFT = 400;
 const float DIMENTION_COEFF = 300;
 
-int main() {
+int main(int argc, const char* argv[]) {
+    flags_t flags = {};
+    InitiallizeFlags(&flags);
+    if (ArgParser(argc, argv, &flags, COMMANDS, COMMANDS_ARRAY_LENGTH, &ValidateInput) == INPUT_ERROR) {
+        return EXIT_FAILURE;
+    }
+
     SDL_Color* colors = (SDL_Color*) calloc(X_SIZE * Y_SIZE, sizeof(SDL_Color));
     if (colors == nullptr) {
         return EXIT_FAILURE;
     }
 
     clock_t start = clock();
-    float delta_x0 = 1 / DIMENTION_COEFF;
 
     float offsets[4] = {0.0, 1.0, 2.0, 3.0};
     const float32x4_t v_offsets = vld1q_f32(offsets);
-    const float32x4_t v_scale = vdupq_n_f32(1.0 / DIMENTION_COEFF);
+    const float32x4_t v_scale = vdupq_n_f32(1.0f / DIMENTION_COEFF);
 
-    for (int w = 0; w < CYCLE_ITERATIONS_CNT; w++) {
+    int iterations_cnt = (int) flags.iteration_cnt;
+    for (int w = 0; w < iterations_cnt; w++) {
         for (int i = 0; i < Y_SIZE; i++) {
             float val_y0 = ((float) i - ((float) Y_SIZE / 2)) / DIMENTION_COEFF;
 
@@ -36,7 +42,7 @@ int main() {
                 float32x4_t y = y0;
 
                 int32x4_t N = vdupq_n_s32(0);
-                float32x4_t threshold = vdupq_n_f32(100.0);
+                float32x4_t threshold = vdupq_n_f32(R2_BOUNDARY);
 
                 for (int n = 0; n < MAX_ITERATION; n++) {
                     float32x4_t x2 = vmulq_f32(x, x);
@@ -63,7 +69,13 @@ int main() {
     }
 
     clock_t end = clock();
-    printf("time spent is %f\n", (float) (end - start) / (CLOCKS_PER_SEC * CYCLE_ITERATIONS_CNT));
-    return drow_mandelbrot_figure(colors);
+    printf("time spent is %f, %d\n", (float) (end - start) / CLOCKS_PER_SEC, iterations_cnt);
+
+    bool status = EXIT_SUCCESS;
+    if (flags.present == true) {
+        status = drow_mandelbrot_figure(colors);
+    }
+    free(colors);
+    return status;
 }
 

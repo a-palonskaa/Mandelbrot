@@ -7,7 +7,7 @@
 
 const int MAX_ITERATION = 255;
 const int R2_BOUNDARY = 100;
-const int CYCLE_ITERATIONS_CNT = 100;
+const int CYCLE_ITERATIONS_CNT = 20;
 const int X_SHIFT = 400;
 const float DIMENTION_COEFF = 300;
 
@@ -49,6 +49,6 @@ int main() {
     }
 
     clock_t end = clock();
-    printf("time spent is %f\n", (float) (end - start) / (CLOCKS_PER_SEC * CYCLE_ITERATIONS_CNT));
+    printf("time spent is %f, %d\n", (float) (end - start) / (CLOCKS_PER_SEC), CYCLE_ITERATIONS_CNT);
     return drow_mandelbrot_figure(colors);
 }
